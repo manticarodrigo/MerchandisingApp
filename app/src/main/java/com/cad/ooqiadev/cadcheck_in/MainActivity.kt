@@ -60,13 +60,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_dashboard -> {
                 // Handle the dashboard menu button action
-                System.out.print("yo")
+                print("dashboard pressed")
             }
-            R.id.nav_gallery -> {
-
+            R.id.nav_settings -> {
+                print("settings pressed")
             }
-            R.id.nav_slideshow -> {
-
+            R.id.nav_sync -> {
+                print("sync pressed")
             }
         }
 
