@@ -12,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,9 +27,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        // Set toolbar title
-        setTitle("Pendientes")
-
         // Initialize test locations
         val locations: ArrayList<Location> = ArrayList()
 
@@ -44,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
         // Access RecyclerView Adapter and load the data
-        var adapter = LocationAdapter(locations)
+        var adapter = MainAdapter(locations)
         rv.adapter = adapter
 
     }
