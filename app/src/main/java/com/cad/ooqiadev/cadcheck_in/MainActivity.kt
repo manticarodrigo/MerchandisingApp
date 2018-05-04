@@ -1,15 +1,18 @@
 package com.cad.ooqiadev.cadcheck_in
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.widget.LinearLayout
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -18,17 +21,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        // Initialize test locations
+        val locations: ArrayList<Location> = ArrayList()
+
+        // Load locations into ArrayList
+        locations.add(Location("Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location("CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location("Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+
+        // Create vertical Layout Manager
+        val rv = findViewById<RecyclerView>(R.id.locationsList)
+        rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+
+        // Access RecyclerView Adapter and load the data
+        var adapter = LocationAdapter(locations)
+        rv.adapter = adapter
+
     }
 
     override fun onBackPressed() {
@@ -60,13 +75,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_dashboard -> {
                 // Handle the dashboard menu button action
-                print("dashboard pressed")
+                println("dashboard pressed")
             }
             R.id.nav_settings -> {
-                print("settings pressed")
+                println("settings pressed")
             }
             R.id.nav_sync -> {
-                print("sync pressed")
+                println("sync pressed")
             }
         }
 
