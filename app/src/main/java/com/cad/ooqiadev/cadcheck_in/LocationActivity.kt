@@ -8,5 +8,9 @@ class LocationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location)
+
+        val locName = intent.getStringExtra(MainAdapter.ViewHolder.LOC_NAME)
+        supportActionBar?.title = locName
+
     }
 }
