@@ -1,3 +1,3 @@
 package com.cad.ooqiadev.cadcheck_in
 
-data class Location(val name: String, val direction: String)
+data class Location(val name: String, val direction: String, val pendingActivities: Int)
