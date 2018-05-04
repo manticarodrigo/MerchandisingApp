@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        // Set toolbar title
+        setTitle("Pendientes")
+
         // Initialize test locations
         val locations: ArrayList<Location> = ArrayList()
 
