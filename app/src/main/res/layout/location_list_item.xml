@@ -16,7 +16,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/locationBadge"
+                android:id="@+id/activityBadge"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/circle_badge"
@@ -32,20 +32,12 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/locationName"
+                    android:id="@+id/activityName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="Name"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
-
-                <TextView
-                    android:id="@+id/locationDirection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="Direction"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
             </LinearLayout>
 
