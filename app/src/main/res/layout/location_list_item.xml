@@ -23,7 +23,8 @@
                 android:gravity="center_vertical"
                 android:text="Date"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:textColor="#009688" />
+                android:textColor="#009688"
+                android:textSize="18sp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/activitiesTasksList"

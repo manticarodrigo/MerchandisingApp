@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 
 class TasksAdapter(val taskList: ArrayList<Task>): RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
 
@@ -13,8 +15,21 @@ class TasksAdapter(val taskList: ArrayList<Task>): RecyclerView.Adapter<TasksAda
     override fun onBindViewHolder(holder: TasksAdapter.ViewHolder, position: Int) {
         val task = taskList[position]
         holder.taskName?.text = task.name
-        holder.taskStatus?.text = task.status
-        holder.taskBadge?.text = task.status
+        holder.taskStatus?.text = task.status.toString()
+
+        if (task.status == Status.PENDING) {
+            holder.taskBadge?.text = "..."
+            holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#BDBDBD"), PorterDuff.Mode.SRC_ATOP)
+        } else if (task.status == Status.PARTIAL) {
+            holder.taskBadge?.text = "!"
+            holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#F2994A"), PorterDuff.Mode.SRC_ATOP)
+        } else if (task.status == Status.FAILED) {
+            holder.taskBadge?.text = "x"
+            holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#EB5757"), PorterDuff.Mode.SRC_ATOP)
+        } else {
+            holder.taskBadge?.text = "✓"
+            holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#6FCF97"), PorterDuff.Mode.SRC_ATOP)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksAdapter.ViewHolder {

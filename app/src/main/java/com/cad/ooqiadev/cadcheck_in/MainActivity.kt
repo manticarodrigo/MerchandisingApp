@@ -31,9 +31,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val locations: ArrayList<Location> = ArrayList()
 
         // Load locations into ArrayList
-        locations.add(Location("Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA", 1))
-        locations.add(Location("CVS", "7250 Carson Blvd, Long Beach CA 90808, USA", 12))
-        locations.add(Location("Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA", 120))
+        locations.add(Location(0, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(0, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(0, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
 
         // Create vertical Layout Manager
         val rv = findViewById<RecyclerView>(R.id.locationsList)

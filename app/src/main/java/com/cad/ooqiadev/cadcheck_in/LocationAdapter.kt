@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import java.text.SimpleDateFormat
 
+
 class LocationAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapter<LocationAdapter.ViewHolder>() {
 
     val byDates = activityList.groupBy { it.dueDate }
@@ -48,7 +49,7 @@ class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.
     override fun onBindViewHolder(holder: LocationTasksAdapter.ViewHolder, position: Int) {
         val activity = activityList[position]
         holder.activityName?.text = activity.title
-        holder.activityBadge?.text = activity.pendingTasks.toString()
+        holder.activityBadge?.text = "10"
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationTasksAdapter.ViewHolder {
@@ -61,7 +62,7 @@ class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.
     }
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val activityName = itemView.findViewById<TextView>(R.id.activityName)
+        val activityName = itemView.findViewById<TextView>(R.id.activityTitle)
         val activityBadge = itemView.findViewById<TextView>(R.id.activityBadge)
         companion object {
             val ACTIVITY_NAME = "activityName"

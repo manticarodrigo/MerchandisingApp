@@ -28,9 +28,9 @@ class LocationActivity : AppCompatActivity() {
         val date = Date(stamp.getTime())
 
         // Load activities into ArrayList
-        activities.add(Activity("Rellenar producto A - PO385", 1, date))
-        activities.add(Activity("Organizar producto B - PO567", 10, date))
-        activities.add(Activity("Revisar producto C - PO890", 25, date))
+        activities.add(Activity(0, 0, 0, 0, "Rellenar producto A - PO385", date, null, null))
+        activities.add(Activity(0, 0, 0, 0, "Organizar producto B - PO567", date, null, null))
+        activities.add(Activity(0, 0, 0, 0, "Revisar producto C - PO890", date, null, null))
 
         // Create vertical Layout Manager
         val rv = findViewById<RecyclerView>(R.id.activitiesDatesList)
