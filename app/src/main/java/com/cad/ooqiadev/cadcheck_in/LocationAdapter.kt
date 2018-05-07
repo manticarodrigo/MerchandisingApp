@@ -63,18 +63,18 @@ class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val activityName = itemView.findViewById<TextView>(R.id.activityName)
         val activityBadge = itemView.findViewById<TextView>(R.id.activityBadge)
-//        companion object {
-//            val ACTIVITY_NAME = "activityName"
-//            val ACTIVITY_PENDING_TASKS = "activityPendingTasks"
-//        }
-//        init {
-//            itemView.setOnClickListener {
-//                val intent = Intent(itemView.context, TasksActivity::class.java)
-//                intent.putExtra(ACTIVITY_NAME, activityName.text.toString())
-//                intent.putExtra(ACTIVITY_PENDING_TASKS, activityPendingTasks.text.toString())
-//                itemView.context.startActivity(intent)
-//            }
-//        }
+        companion object {
+            val ACTIVITY_NAME = "activityName"
+            val ACTIVITY_PENDING_TASKS = "activityPendingTasks"
+        }
+        init {
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, TasksActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME, activityName.text.toString())
+                intent.putExtra(ACTIVITY_PENDING_TASKS, activityBadge.text.toString())
+                itemView.context.startActivity(intent)
+            }
+        }
     }
 
 }
