@@ -12,13 +12,13 @@ class MainAdapter(val locationList: ArrayList<Location>): RecyclerView.Adapter<M
 
     override fun onBindViewHolder(holder: MainAdapter.ViewHolder, position: Int) {
         val location = locationList[position]
-        holder?.locationName?.text = location.name
-        holder?.locationDirection?.text = location.direction
-        holder?.locationBadge?.text = location.pendingActivities.toString()
+        holder.locationName?.text = location.name
+        holder.locationDirection?.text = location.direction
+        holder.locationBadge?.text = location.pendingActivities.toString()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainAdapter.ViewHolder {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.main_list_item, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.main_list_item, parent, false)
         return ViewHolder(v)
     }
 
