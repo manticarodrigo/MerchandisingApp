@@ -42,9 +42,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        // insertMockData()
-
-        fetchLocations()
+        // Handle data
+        insertMockData()
         fetchActivities()
 
     }
@@ -67,24 +66,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun fetchActivities() {
         val activity = Runnable {
-            val activityData =
-                    mDb?.activityDao()?.getAll()
+            val activityData = mDb?.userDao()?.getUserActivities(0)
             mUiHandler.post({
                 if (activityData == null || activityData.size == 0) {
                     println("No activities in db...")
                 } else {
                     println(activityData)
-                    // bindDataWithUi(activityData = activityData?.get(0))
+                    fetchLocations(activityData)
                 }
             })
         }
         mDbWorkerThread.postObject(activity)
     }
 
-    private fun fetchLocations() {
+    private fun fetchLocations(activities: List<Activity>) {
         val location = Runnable {
-            val locationData =
-                    mDb?.locationDao()?.getAll()
+            val locationData = activities.map { mDb?.locationDao()?.getLocationForActivity(it.id) }
             mUiHandler.post({
                 if (locationData == null || locationData.size == 0) {
                     println("No locations in db...")
@@ -95,16 +92,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             })
         }
         mDbWorkerThread.postObject(location)
-    }
-
-    private fun insertLocationDataInDb(data: Location) {
-        val location = Runnable { mDb?.locationDao()?.insert(data) }
-        mDbWorkerThread.postObject(location)
-    }
-
-    private fun insertActivityDataInDb(data: Activity) {
-        val activity = Runnable { mDb?.activityDao()?.insert(data) }
-        mDbWorkerThread.postObject(activity)
     }
 
     override fun onBackPressed() {
@@ -150,15 +137,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    private fun insertLocationDataInDb(data: Location) {
+        val location = Runnable { mDb?.locationDao()?.insert(data) }
+        mDbWorkerThread.postObject(location)
+    }
+
+    private fun insertActivityDataInDb(data: Activity) {
+        val activity = Runnable { mDb?.activityDao()?.insert(data) }
+        mDbWorkerThread.postObject(activity)
+    }
+
+    private fun insertUserDataInDb(data: User) {
+        val user = Runnable { mDb?.userDao()?.insert(data) }
+        mDbWorkerThread.postObject(user)
+    }
+
     private fun insertMockData() {
+
+        // Initialize and insert test user
+        val user = User(0, "John Doe")
+        insertUserDataInDb(user)
+
         // Initialize test locations
         val locations: ArrayList<Location> = ArrayList()
 
         // Load locations into ArrayList
-        locations.add(Location(null, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        locations.add(Location(null, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        locations.add(Location(null, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(1, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(2, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(3, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
 
+        // Insert test locations in db
         for (location in locations) {
             insertLocationDataInDb(location)
         }
@@ -168,10 +176,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val time = System.currentTimeMillis()
 
         // Load activities into ArrayList
-        activities.add(Activity(null, 0, 1, 0, "Rellenar producto A - PO385", time, null, null))
-        activities.add(Activity(null, 0, 2, 0, "Organizar producto B - PO567", time, null, null))
-        activities.add(Activity(null, 0, 3, 0, "Revisar producto C - PO890", time, null, null))
+        activities.add(Activity(1, 0, 1, 0, "Rellenar producto A - PO385", time, null, null))
+        activities.add(Activity(2, 0, 2, 0, "Organizar producto B - PO567", time, null, null))
+        activities.add(Activity(3, 0, 3, 0, "Revisar producto C - PO890", time, null, null))
 
+        // Insert test activities in db
         for (activity in activities) {
             insertActivityDataInDb(activity)
         }

@@ -12,7 +12,7 @@ interface ActivityDao {
     fun findActivityById(id: Long): Activity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(location: Activity)
+    fun insert(activity: Activity)
 
     @Query("DELETE from activities")
     fun deleteAll()

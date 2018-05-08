@@ -7,7 +7,6 @@ import android.arch.persistence.room.ForeignKey
 import java.util.*
 
 @Entity(tableName = "activities")
-// , foreignKeys = @ForeignKey(entity = Location.class, parentColumns = "id", childColumns = "location_id")
 data class Activity(
         @PrimaryKey(autoGenerate = true) val id: Long?,
         @ColumnInfo(name = "owner_id") val ownerId: Long,

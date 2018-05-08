@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import java.text.SimpleDateFormat
@@ -39,43 +38,6 @@ class LocationAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapt
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val date = itemView.findViewById<TextView>(R.id.activityDate)
         val rv = itemView.findViewById<RecyclerView>(R.id.activitiesTasksList)
-    }
-
-}
-
-class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapter<LocationTasksAdapter.ViewHolder>() {
-
-
-    override fun onBindViewHolder(holder: LocationTasksAdapter.ViewHolder, position: Int) {
-        val activity = activityList[position]
-        holder.activityName?.text = activity.title
-        holder.activityBadge?.text = "10"
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationTasksAdapter.ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.location_task_list_item, parent, false)
-        return ViewHolder(v)
-    }
-
-    override fun getItemCount(): Int {
-        return activityList.size
-    }
-
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val activityName = itemView.findViewById<TextView>(R.id.activityTitle)
-        val activityBadge = itemView.findViewById<TextView>(R.id.activityBadge)
-        companion object {
-            val ACTIVITY_NAME = "activityName"
-            val ACTIVITY_PENDING_TASKS = "activityPendingTasks"
-        }
-        init {
-            itemView.setOnClickListener {
-                val intent = Intent(itemView.context, TasksActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME, activityName.text.toString())
-                intent.putExtra(ACTIVITY_PENDING_TASKS, activityBadge.text.toString())
-                itemView.context.startActivity(intent)
-            }
-        }
     }
 
 }
