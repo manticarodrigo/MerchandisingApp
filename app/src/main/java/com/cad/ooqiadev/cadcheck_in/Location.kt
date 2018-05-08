@@ -4,7 +4,7 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
-@Entity(tableName = "location")
+@Entity(tableName = "locations")
 data class Location(
         @PrimaryKey(autoGenerate = true) val id: Long?,
         @ColumnInfo(name = "name") val name: String,

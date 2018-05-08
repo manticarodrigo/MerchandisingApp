@@ -13,13 +13,13 @@ import java.text.SimpleDateFormat
 
 class LocationAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapter<LocationAdapter.ViewHolder>() {
 
-    val byDates = activityList.groupBy { it.dueDate }
+    val byDates = activityList.groupBy { it.dueTime }
 
     override fun onBindViewHolder(holder: LocationAdapter.ViewHolder, position: Int) {
         // Update date label
         val sdf = SimpleDateFormat("MM/dd/yyyy")
         val dateList = byDates.values.toMutableList()
-        holder.date?.text = sdf.format(dateList[position][0].dueDate)
+        holder.date?.text = sdf.format(dateList[position][0].dueTime)
         // Create vertical Layout Manager
         holder.rv?.layoutManager = LinearLayoutManager(holder.rv.context, LinearLayout.VERTICAL, false)
         // Access RecyclerView Adapter and load the data

@@ -1,6 +1,7 @@
 package com.cad.ooqiadev.cadcheck_in
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -10,10 +11,17 @@ import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private var mDb: AppDatabase? = null
+
+    private lateinit var mDbWorkerThread: DbWorkerThread
+
+    private val mUiHandler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +38,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        // Start db singleton thread
+        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
+        mDbWorkerThread.start()
+
+        mDb = AppDatabase.getInstance(this)
+
+        // insertLocationDataInDb(Location(0, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        // fetchLocationsFromDb()
+
         // Initialize test locations
         val locations: ArrayList<Location> = ArrayList()
 
@@ -37,6 +54,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         locations.add(Location(0, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
         locations.add(Location(0, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
         locations.add(Location(0, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+
 
         // Create vertical Layout Manager
         val rv = findViewById<RecyclerView>(R.id.locationsList)
@@ -46,6 +64,55 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var adapter = MainAdapter(locations)
         rv.adapter = adapter
 
+    }
+
+    override fun onDestroy() {
+        AppDatabase.destroyInstance()
+        mDbWorkerThread.quit()
+        super.onDestroy()
+    }
+
+    private fun fetchActivitiesFromDb() {
+        val activity = Runnable {
+            val activityData =
+                    mDb?.activityDao()?.getAll()
+            mUiHandler.post({
+                if (activityData == null || activityData.size == 0) {
+                    Toast.makeText(this, "No hay actividades en la base de datos..!!", Toast.LENGTH_SHORT)
+                } else {
+                    println(activityData.get(0))
+                    // bindDataWithUi(activityData = activityData?.get(0))
+                }
+            })
+        }
+        mDbWorkerThread.postActivity(activity)
+    }
+
+    private fun fetchLocationsFromDb() {
+        val location = Runnable {
+            val locationData =
+                    mDb?.locationDao()?.getAll()
+            mUiHandler.post({
+                println("locations in db:")
+                if (locationData == null || locationData.size == 0) {
+                    Toast.makeText(this, "No hay ubicaciones en la base de datos..!!", Toast.LENGTH_SHORT)
+                } else {
+                    println(locationData.get(0))
+                    // bindDataWithUi(locationData = locationData?.get(0))
+                }
+            })
+        }
+        mDbWorkerThread.postLocation(location)
+    }
+
+    private fun insertLocationDataInDb(data: Location) {
+        val location = Runnable { mDb?.locationDao()?.insert(data) }
+        mDbWorkerThread.postActivity(location)
+    }
+
+    private fun insertActivityDataInDb(data: Activity) {
+        val activity = Runnable { mDb?.activityDao()?.insert(data) }
+        mDbWorkerThread.postActivity(activity)
     }
 
     override fun onBackPressed() {
