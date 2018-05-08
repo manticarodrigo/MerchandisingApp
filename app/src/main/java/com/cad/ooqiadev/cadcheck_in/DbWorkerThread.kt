@@ -12,12 +12,8 @@ class DbWorkerThread(threadName: String) : HandlerThread(threadName) {
         mWorkerHandler = Handler(looper)
     }
 
-    fun postLocation(location: Runnable) {
-        mWorkerHandler.post(location)
-    }
-
-    fun postActivity(activity: Runnable) {
-        mWorkerHandler.post(activity)
+    fun postObject(obj: Runnable) {
+        mWorkerHandler.post(obj)
     }
 
 }

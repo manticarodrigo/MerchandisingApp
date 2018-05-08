@@ -11,19 +11,22 @@ import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var mDb: AppDatabase? = null
-
     private lateinit var mDbWorkerThread: DbWorkerThread
-
     private val mUiHandler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Start db singleton thread
+        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
+        mDbWorkerThread.start()
+        mDb = AppDatabase.getInstance(this)
+
+        // Init
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Set toolbar title
         supportActionBar?.title = "Pendientes"
 
+        // Add drawer listener
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -38,31 +42,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        // Start db singleton thread
-        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
-        mDbWorkerThread.start()
+        // insertMockData()
 
-        mDb = AppDatabase.getInstance(this)
-
-        // insertLocationDataInDb(Location(0, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        // fetchLocationsFromDb()
-
-        // Initialize test locations
-        val locations: ArrayList<Location> = ArrayList()
-
-        // Load locations into ArrayList
-        locations.add(Location(0, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        locations.add(Location(0, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        locations.add(Location(0, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-
-
-        // Create vertical Layout Manager
-        val rv = findViewById<RecyclerView>(R.id.locationsList)
-        rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-
-        // Access RecyclerView Adapter and load the data
-        var adapter = MainAdapter(locations)
-        rv.adapter = adapter
+        fetchLocations()
+        fetchActivities()
 
     }
 
@@ -72,47 +55,56 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onDestroy()
     }
 
-    private fun fetchActivitiesFromDb() {
+    private fun bindDataWithUi(locationData: ArrayList<Location>) {
+        // Create vertical Layout Manager
+        val rv = findViewById<RecyclerView>(R.id.locationsList)
+        rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+
+        // Access RecyclerView Adapter and load the data
+        var adapter = MainAdapter(locationData)
+        rv.adapter = adapter
+    }
+
+    private fun fetchActivities() {
         val activity = Runnable {
             val activityData =
                     mDb?.activityDao()?.getAll()
             mUiHandler.post({
                 if (activityData == null || activityData.size == 0) {
-                    Toast.makeText(this, "No hay actividades en la base de datos..!!", Toast.LENGTH_SHORT)
+                    println("No activities in db...")
                 } else {
-                    println(activityData.get(0))
+                    println(activityData)
                     // bindDataWithUi(activityData = activityData?.get(0))
                 }
             })
         }
-        mDbWorkerThread.postActivity(activity)
+        mDbWorkerThread.postObject(activity)
     }
 
-    private fun fetchLocationsFromDb() {
+    private fun fetchLocations() {
         val location = Runnable {
             val locationData =
                     mDb?.locationDao()?.getAll()
             mUiHandler.post({
-                println("locations in db:")
                 if (locationData == null || locationData.size == 0) {
-                    Toast.makeText(this, "No hay ubicaciones en la base de datos..!!", Toast.LENGTH_SHORT)
+                    println("No locations in db...")
                 } else {
-                    println(locationData.get(0))
-                    // bindDataWithUi(locationData = locationData?.get(0))
+                    println(locationData)
+                    bindDataWithUi(locationData as ArrayList<Location>)
                 }
             })
         }
-        mDbWorkerThread.postLocation(location)
+        mDbWorkerThread.postObject(location)
     }
 
     private fun insertLocationDataInDb(data: Location) {
         val location = Runnable { mDb?.locationDao()?.insert(data) }
-        mDbWorkerThread.postActivity(location)
+        mDbWorkerThread.postObject(location)
     }
 
     private fun insertActivityDataInDb(data: Activity) {
         val activity = Runnable { mDb?.activityDao()?.insert(data) }
-        mDbWorkerThread.postActivity(activity)
+        mDbWorkerThread.postObject(activity)
     }
 
     override fun onBackPressed() {
@@ -156,5 +148,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun insertMockData() {
+        // Initialize test locations
+        val locations: ArrayList<Location> = ArrayList()
+
+        // Load locations into ArrayList
+        locations.add(Location(null, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(null, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+        locations.add(Location(null, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
+
+        for (location in locations) {
+            insertLocationDataInDb(location)
+        }
+
+        // Initialize test activities
+        val activities: ArrayList<Activity> = ArrayList()
+        val time = System.currentTimeMillis()
+
+        // Load activities into ArrayList
+        activities.add(Activity(null, 0, 1, 0, "Rellenar producto A - PO385", time, null, null))
+        activities.add(Activity(null, 0, 2, 0, "Organizar producto B - PO567", time, null, null))
+        activities.add(Activity(null, 0, 3, 0, "Revisar producto C - PO890", time, null, null))
+
+        for (activity in activities) {
+            insertActivityDataInDb(activity)
+        }
     }
 }
