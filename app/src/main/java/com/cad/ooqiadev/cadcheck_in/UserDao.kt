@@ -20,7 +20,4 @@ interface UserDao {
     @Delete
     fun deleteUser(user: User)
 
-    @Query("SELECT * FROM activities WHERE owner_id = :id")
-    fun getUserActivities(id: Long): List<Activity>
-
 }

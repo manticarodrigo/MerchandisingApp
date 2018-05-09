@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun fetchActivities() {
         val activity = Runnable {
-            val activityData = mDb?.userDao()?.getUserActivities(0)
+            val activityData = mDb?.activityDao()?.getUserActivities(0) // TODO: Fetch user id from cache
             mUiHandler.post({
                 if (activityData == null || activityData.isEmpty()) {
                     println("No activities for user in db...")
@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (locationData == null || locationData.isEmpty()) {
                     println("No locations for activities in db...")
                 } else {
-                    println(locationData)
+                    // println(locationData)
                     bindDataWithUi(locationArrayList)
                 }
             })

@@ -19,4 +19,10 @@ interface ActivityDao {
 
     @Delete
     fun deleteActivity(activity: Activity)
+
+    @Query("SELECT * FROM activities WHERE owner_id = :id")
+    fun getUserActivities(id: Long): List<Activity>
+
+    @Query("SELECT * FROM activities WHERE location_id = :id")
+    fun getLocationActivities(id: Long): List<Activity>
 }
