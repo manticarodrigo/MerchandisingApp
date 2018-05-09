@@ -14,7 +14,7 @@ class MainAdapter(val locationList: ArrayList<Location>): RecyclerView.Adapter<M
         val location = locationList[position]
         holder.locationName?.text = location.name
         holder.locationDirection?.text = location.direction
-        holder.locationBadge?.text = "10"
+        holder.locationBadge?.text = location.pendingActivities.toString()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainAdapter.ViewHolder {
