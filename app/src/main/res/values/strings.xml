@@ -6,4 +6,7 @@
     <string name="nav_header_subtitle">CAD Import</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Filtros</string>
+    <string name="order_empty_message">Ingrese el número de orden</string>
+    <string name="not_available_connection">No esta conectado a una red</string>
+
 </resources>

@@ -11,14 +11,17 @@ import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var mDb: AppDatabase? = null
+    private var ftpClient: FTP? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
     private val mUiHandler = Handler()
+    private val mCSViHandler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -102,6 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_sync -> {
                 println("sync pressed")
+                syncFileData();
             }
         }
 
@@ -160,6 +164,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun insertUserDataInDb(data: User) {
         val user = Runnable { mDb?.userDao()?.insert(data) }
         mDbWorkerThread.postTask(user)
+    }
+
+    private fun syncFileData() {
+        var localPathFile: String
+
+        val dataFile = Runnable {
+            this.ftpClient = FTP()
+            var res : Result
+
+            localPathFile = applicationContext.filesDir.path + "/LOCATIONS.csv"
+            res = ftpClient?.DownloadFile("LOCATIONS.csv", localPathFile)!!
+
+            mCSViHandler.post({
+                if(res.isSuccess) {
+
+                } else {
+                    Toast.makeText(applicationContext, res.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        }
+        mDbWorkerThread.postTask(dataFile)
     }
 
     private fun insertMockData() {
