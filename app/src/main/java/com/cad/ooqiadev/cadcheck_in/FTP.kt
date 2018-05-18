@@ -30,7 +30,7 @@ class FTP {
 
             ftpClient!!.setConnectTimeout(10000)
             if (server.contains("127.0.0.1") || server.contains("localhost")) {
-                result.isSuccess = false
+                result.success = false
                 result.message = "Servidor remoto no permitido."
             } else {
                 ftpClient!!.connect(InetAddress.getByName(server))
@@ -43,7 +43,7 @@ class FTP {
                     result.message = "Error de conexión a FTP."
                 } else {
                     isFtpClientOpened = true
-                    result.isSuccess = true
+                    result.success = true
                     result.message = "Conexión exitosa."
                 }
             }
@@ -81,18 +81,18 @@ class FTP {
 
             val openConnectionResult = openFTPConnection()
 
-            if (openConnectionResult.isSuccess) {
+            if (openConnectionResult.success) {
 
                 ftpClient!!.enterLocalPassiveMode()
 
                 val file = FileOutputStream(localFile)
 
-                result.isSuccess = ftpClient!!.retrieveFile(remoteFile, file)
+                result.success = ftpClient!!.retrieveFile(remoteFile, file)
 
                 val reply = ftpClient!!.getReplyCode()
 
                 if (!FTPReply.isPositiveCompletion(reply)) {
-                    result.isSuccess = false
+                    result.success = false
                     result.message = "Archivo no encontrado!"
                 } else {
                     result.message = "Archivo descargado exitósamente! $localFile"
