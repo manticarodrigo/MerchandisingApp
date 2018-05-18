@@ -11,14 +11,21 @@ import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import com.cad.ooqiadev.cadcheck_in.parsers.Location as LocationParse
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var mDb: AppDatabase? = null
+    private var ftpClient: FTP? = null
+    private var CSVFile: CSV? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
     private val mUiHandler = Handler()
+    private val mCSViHandler = Handler()
+    private var adapter: MainAdapter? = null
+    private var locations: ArrayList<Location> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -43,8 +50,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        //deleteActivityDataInDb()
+        //deleteLocationDataInDb()
         // Handle data
-        insertMockData()
         fetchActivities()
 
     }
@@ -62,7 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
         // Access RecyclerView Adapter and load the data
-        var adapter = MainAdapter(locationData)
+        this.adapter = MainAdapter(locationData)
         rv.adapter = adapter
     }
 
@@ -102,6 +110,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_sync -> {
                 println("sync pressed")
+                syncFileData();
             }
         }
 
@@ -114,7 +123,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val activityData = mDb?.activityDao()?.getUserActivities(0) // TODO: Fetch user id from cache
             mUiHandler.post({
                 if (activityData == null || activityData.isEmpty()) {
-                    println("No activities for user in db...")
+                    Toast.makeText(applicationContext, "No activities for user in db. Please, synchronize", Toast.LENGTH_SHORT).show()
                 } else {
                     println(activityData)
                     fetchLocations(activityData)
@@ -128,11 +137,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val location = Runnable {
             val locationData = activities.map { mDb?.locationDao()?.getLocationForActivity(it.locationId) }
             val locationMap = locationData.groupBy { it?.id }
-            val locationArrayList: ArrayList<Location> = ArrayList()
+            //val locationArrayList: ArrayList<Location> = ArrayList()
             locationMap.forEach {
                 val loc = it.value[0]
                 loc?.pendingActivities = it.value.size
-                locationArrayList.add(loc as Location)
+                locations.add(loc as Location)
             }
 
             mUiHandler.post({
@@ -140,20 +149,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     println("No locations for activities in db...")
                 } else {
                     // println(locationData)
-                    bindDataWithUi(locationArrayList)
+                    bindDataWithUi(locations)
                 }
             })
         }
         mDbWorkerThread.postTask(location)
     }
 
+    private fun deleteLocationDataInDb() {
+        val location = Runnable { mDb?.locationDao()?.deleteAll() }
+        mDbWorkerThread.postTask(location)
+    }
+
+    private fun deleteActivityDataInDb() {
+        val activity = Runnable { mDb?.activityDao()?.deleteAll() }
+        mDbWorkerThread.postTask(activity)
+    }
+
     private fun insertLocationDataInDb(data: Location) {
-        val location = Runnable { mDb?.locationDao()?.insert(data) }
+        val location = Runnable {
+            mDb?.locationDao()?.insert(data)
+
+            mUiHandler.post({
+                bindDataWithUi(locations)
+                adapter?.notifyDataSetChanged()
+            })
+        }
         mDbWorkerThread.postTask(location)
     }
 
     private fun insertActivityDataInDb(data: Activity) {
-        val activity = Runnable { mDb?.activityDao()?.insert(data) }
+        val activity = Runnable {
+            mDb?.activityDao()?.insert(data)
+            Toast.makeText(applicationContext, "Sync done!", Toast.LENGTH_SHORT).show()
+        }
         mDbWorkerThread.postTask(activity)
     }
 
@@ -162,19 +191,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDbWorkerThread.postTask(user)
     }
 
-    private fun insertMockData() {
+    private fun syncFileData() {
+        var localPathFile: String
+
+        val dataFile = Runnable {
+            this.ftpClient = FTP()
+            var lp = LocationParse()
+            var res : Result
+
+            localPathFile = applicationContext.filesDir.path + "/LOCATIONS.csv"
+            res = ftpClient?.DownloadFile("LOCATIONS.csv", localPathFile)!!
+
+            mCSViHandler.post({
+
+                if(res.success) {
+
+                    CSVFile = CSV()
+                    res = CSVFile?.readFile(localPathFile)!!
+
+                    locations = lp.parse(res.rows!!)
+
+                    insertData(locations)
+
+                } else {
+                    Toast.makeText(applicationContext, res.message, Toast.LENGTH_SHORT).show()
+                }
+
+            })
+
+        }
+        mDbWorkerThread.postTask(dataFile)
+    }
+
+    private fun insertData(locations: ArrayList<Location>) {
 
         // Initialize and insert test user
         val user = User(0, "John Doe")
         insertUserDataInDb(user)
-
-        // Initialize test locations
-        val locations: ArrayList<Location> = ArrayList()
-
-        // Load locations into ArrayList
-        locations.add(Location(1, "Walmart", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        locations.add(Location(2, "CVS", "7250 Carson Blvd, Long Beach CA 90808, USA"))
-        locations.add(Location(3, "Whole Foods", "7250 Carson Blvd, Long Beach CA 90808, USA"))
 
         // Insert test locations in db
         for (location in locations) {
