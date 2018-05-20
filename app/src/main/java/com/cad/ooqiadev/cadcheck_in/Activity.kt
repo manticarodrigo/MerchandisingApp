@@ -8,12 +8,12 @@ import java.util.*
 
 @Entity(tableName = "activities")
 data class Activity(
-        @PrimaryKey(autoGenerate = true) val id: Long?,
-        @ColumnInfo(name = "owner_id") val ownerId: Long,
-        @ColumnInfo(name = "location_id") val locationId: Long,
-        @ColumnInfo(name = "order_id") val orderId: Long,
-        @ColumnInfo(name = "title") val title: String,
-        @ColumnInfo(name = "due_date") val dueTime: Long,
-        @ColumnInfo(name = "start_time") val startTime: Long?,
-        @ColumnInfo(name = "end_time") val endTime: Long?
+        @PrimaryKey(autoGenerate = true) var id: Long? = null,
+        @ColumnInfo(name = "owner_id") var ownerId: Long? = null,
+        @ColumnInfo(name = "location_id") var locationId: Long? = null,
+        @ColumnInfo(name = "order_id") var orderId: Long? = null,
+        @ColumnInfo(name = "title") var title: String? = null,
+        @ColumnInfo(name = "due_date") var dueTime: Long? = null,
+        @ColumnInfo(name = "start_time") var startTime: Long? = null,
+        @ColumnInfo(name = "end_time") var endTime: Long? = null
 )

@@ -13,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.cad.ooqiadev.cadcheck_in.parsers.Location as LocationParse
+import com.cad.ooqiadev.cadcheck_in.parsers.Activity as ActivityParse
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val mCSViHandler = Handler()
     private var adapter: MainAdapter? = null
     private var locations: ArrayList<Location> = ArrayList()
+    private var activities: ArrayList<Activity> = ArrayList()
+    private var fileNames = listOf("LOCATIONS", "ACTIVITIES")
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -110,7 +113,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_sync -> {
                 println("sync pressed")
-                syncFileData();
+                fileNames.forEach {
+                    syncFileData(it);
+                }
             }
         }
 
@@ -167,14 +172,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun insertLocationDataInDb(data: Location) {
-        val location = Runnable {
-            mDb?.locationDao()?.insert(data)
-
-            mUiHandler.post({
-                bindDataWithUi(locations)
-                adapter?.notifyDataSetChanged()
-            })
-        }
+        val location = Runnable { mDb?.locationDao()?.insert(data) }
         mDbWorkerThread.postTask(location)
     }
 
@@ -191,16 +189,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDbWorkerThread.postTask(user)
     }
 
-    private fun syncFileData() {
+    private fun syncFileData(fileName: String) {
         var localPathFile: String
 
         val dataFile = Runnable {
             this.ftpClient = FTP()
             var lp = LocationParse()
+            var ap = ActivityParse()
             var res : Result
 
-            localPathFile = applicationContext.filesDir.path + "/LOCATIONS.csv"
-            res = ftpClient?.DownloadFile("LOCATIONS.csv", localPathFile)!!
+            localPathFile = applicationContext.filesDir.path + "/" + fileName + ".csv"
+            res = ftpClient?.DownloadFile(fileName + ".csv", localPathFile)!!
 
             mCSViHandler.post({
 
@@ -209,9 +208,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     CSVFile = CSV()
                     res = CSVFile?.readFile(localPathFile)!!
 
-                    locations = lp.parse(res.rows!!)
+                    when(fileName) {
+                        "LOCATIONS" -> {
+                            locations = lp.parse(res.rows!!)
+                            insertLocations(locations)
+                        }
 
-                    insertData(locations)
+                        "ACTIVITIES" -> {
+                            activities = ap.parse(res.rows!!)
+                            insertActivities(activities)
+                        }
+                    }
 
                 } else {
                     Toast.makeText(applicationContext, res.message, Toast.LENGTH_SHORT).show()
@@ -223,7 +230,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDbWorkerThread.postTask(dataFile)
     }
 
-    private fun insertData(locations: ArrayList<Location>) {
+    private fun insertLocations(locations: ArrayList<Location>) {
 
         // Initialize and insert test user
         val user = User(0, "John Doe")
@@ -234,18 +241,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             insertLocationDataInDb(location)
         }
 
-        // Initialize test activities
-        val activities: ArrayList<Activity> = ArrayList()
-        val time = System.currentTimeMillis()
+    }
 
-        // Load activities into ArrayList
-        activities.add(Activity(1, 0, 1, 385, "Rellenar producto A", time, null, null))
-        activities.add(Activity(2, 0, 1, 385, "Organizar producto B", time, null, null))
-        activities.add(Activity(3, 0, 2, 567, "Organizar producto B", time, null, null))
-        activities.add(Activity(4, 0, 3, 890, "Revisar producto C", time, null, null))
+    private fun insertActivities(activities: ArrayList<Activity>) {
         // Insert test activities in db
         for (activity in activities) {
             insertActivityDataInDb(activity)
         }
+
+        locations  = ArrayList()
+        fetchLocations(activities)
     }
 }
