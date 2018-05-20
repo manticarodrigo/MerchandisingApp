@@ -10,6 +10,7 @@ class Result : Serializable {
     var rows: Iterable<CSVRecord>? = null
 
     var location: Location? = null
+    var activity: Activity? = null
 
     init {
         success = false
