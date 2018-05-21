@@ -1,10 +1,6 @@
 package com.cad.ooqiadev.cadcheck_in
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
-import android.arch.persistence.room.ForeignKey
-import java.util.*
+import android.arch.persistence.room.*
 
 @Entity(tableName = "activities")
 data class Activity(
@@ -15,5 +11,6 @@ data class Activity(
         @ColumnInfo(name = "title") var title: String? = null,
         @ColumnInfo(name = "due_date") var dueTime: Long? = null,
         @ColumnInfo(name = "start_time") var startTime: Long? = null,
-        @ColumnInfo(name = "end_time") var endTime: Long? = null
+        @ColumnInfo(name = "end_time") var endTime: Long? = null,
+        @Ignore var pendingTasks: Int? = 0
 )

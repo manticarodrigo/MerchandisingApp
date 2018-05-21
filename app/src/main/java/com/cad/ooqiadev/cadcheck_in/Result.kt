@@ -11,6 +11,7 @@ class Result : Serializable {
 
     var location: Location? = null
     var activity: Activity? = null
+    var task: Task? = null
 
     init {
         success = false

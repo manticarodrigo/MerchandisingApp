@@ -22,7 +22,7 @@ class LocationAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapt
         // Create vertical Layout Manager
         holder.rv?.layoutManager = LinearLayoutManager(holder.rv.context, LinearLayout.VERTICAL, false)
         // Access RecyclerView Adapter and load the data
-        var adapter = LocationTasksAdapter(dateList[position] as ArrayList<Activity>)
+        var adapter = LocationActivitiesAdapter(dateList[position] as ArrayList<Activity>)
         holder.rv?.adapter = adapter
     }
 

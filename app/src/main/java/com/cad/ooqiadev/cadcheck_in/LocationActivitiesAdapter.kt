@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.content.Intent
 
-class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapter<LocationTasksAdapter.ViewHolder>() {
+class LocationActivitiesAdapter(val activityList: ArrayList<Activity>): RecyclerView.Adapter<LocationActivitiesAdapter.ViewHolder>() {
 
 
-    override fun onBindViewHolder(holder: LocationTasksAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: LocationActivitiesAdapter.ViewHolder, position: Int) {
         val activity = activityList[position]
-        holder.activityName?.text = activity.title
-        holder.activityBadge?.text = "10"
+        holder.activityTitle?.text = activity.title
+        holder.activityOrder?.text = "PO" + activity.orderId.toString()
+        holder.activityBadge?.text = activity.pendingTasks.toString()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationTasksAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationActivitiesAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.location_task_list_item, parent, false)
         return ViewHolder(v)
     }
@@ -26,7 +27,8 @@ class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.
     }
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val activityName = itemView.findViewById<TextView>(R.id.activityTitle)
+        val activityTitle = itemView.findViewById<TextView>(R.id.activityTitle)
+        val activityOrder = itemView.findViewById<TextView>(R.id.activityOrder)
         val activityBadge = itemView.findViewById<TextView>(R.id.activityBadge)
         companion object {
             val ACTIVITY_NAME = "activityName"
@@ -35,7 +37,7 @@ class LocationTasksAdapter(val activityList: ArrayList<Activity>): RecyclerView.
         init {
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, TasksActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME, activityName.text.toString())
+                intent.putExtra(ACTIVITY_NAME, activityTitle.text.toString())
                 intent.putExtra(ACTIVITY_PENDING_TASKS, activityBadge.text.toString())
                 itemView.context.startActivity(intent)
             }

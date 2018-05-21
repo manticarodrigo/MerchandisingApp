@@ -16,6 +16,8 @@ class LocationActivity : AppCompatActivity() {
     private var mDb: AppDatabase? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
     private val mUiHandler = Handler()
+    private var activities: ArrayList<Activity> = ArrayList()
+    private var tasks: ArrayList<Task> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Start worker thread and access db singleton
@@ -53,10 +55,30 @@ class LocationActivity : AppCompatActivity() {
                     println("No activities for user in db...")
                 } else {
                     // println(activityData)
-                    bindDataWithUi(activityData as ArrayList<Activity>)
+                    fetchTasks(activityData)
                 }
             })
         }
         mDbWorkerThread.postTask(activity)
+    }
+
+    private fun fetchTasks(activities: List<Activity>) {
+        val task = Runnable {
+            val taskData = activities.map { mDb?.taskDao()?.getActivityTasks(it.id) }
+            activities.forEachIndexed { i, activity ->
+                val taskArr = taskData[i]
+                activity?.pendingTasks = taskArr?.size
+                this.activities.add(activity)
+            }
+            mUiHandler.post({
+                if (taskData == null || taskData.isEmpty()) {
+                    println("No locations for activities in db...")
+                } else {
+                    println(taskData)
+                    bindDataWithUi(this.activities)
+                }
+            })
+        }
+        mDbWorkerThread.postTask(task)
     }
 }

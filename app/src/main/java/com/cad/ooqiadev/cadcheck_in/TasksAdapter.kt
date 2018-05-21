@@ -14,16 +14,16 @@ class TasksAdapter(val taskList: ArrayList<Task>): RecyclerView.Adapter<TasksAda
 
     override fun onBindViewHolder(holder: TasksAdapter.ViewHolder, position: Int) {
         val task = taskList[position]
-        holder.taskName?.text = task.name
+        holder.taskName?.text = task.description
         holder.taskStatus?.text = task.status.toString()
 
-        if (task.status == Status.PENDING) {
+        if (Status.valueOf(task.status as String) == Status.PENDING) {
             holder.taskBadge?.text = "..."
             holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#BDBDBD"), PorterDuff.Mode.SRC_ATOP)
-        } else if (task.status == Status.PARTIAL) {
+        } else if (Status.valueOf(task.status as String) == Status.PARTIAL) {
             holder.taskBadge?.text = "!"
             holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#F2994A"), PorterDuff.Mode.SRC_ATOP)
-        } else if (task.status == Status.FAILED) {
+        } else if (Status.valueOf(task.status as String) == Status.FAILED) {
             holder.taskBadge?.text = "x"
             holder.taskBadge?.getBackground()?.setColorFilter(Color.parseColor("#EB5757"), PorterDuff.Mode.SRC_ATOP)
         } else {

@@ -5,12 +5,13 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.Room
 import android.content.Context
 
-@Database(entities = arrayOf(User::class, Location::class, Activity::class), version = 1)
+@Database(entities = arrayOf(User::class, Location::class, Activity::class, Task::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun locationDao(): LocationDao
     abstract fun activityDao(): ActivityDao
+    abstract fun taskDao(): TaskDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

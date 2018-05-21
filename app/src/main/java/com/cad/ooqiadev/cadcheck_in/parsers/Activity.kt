@@ -7,19 +7,19 @@ import java.util.ArrayList
 
 class Activity {
 
-    fun parse(locationRecords: Iterable<CSVRecord>): ArrayList<Activity> {
+    fun parse(activityRecords: Iterable<CSVRecord>): ArrayList<Activity> {
 
         var parserResult: Result
-        val location = ArrayList<Activity>()
+        val activity = ArrayList<Activity>()
 
-        for (record in locationRecords) {
+        for (record in activityRecords) {
             parserResult = parse(record)
             if (parserResult.success) {
-                location.add(parserResult.activity!!)
+                activity.add(parserResult.activity!!)
             }
         }
 
-        return location
+        return activity
     }
 
     protected fun parse(record: CSVRecord): Result {
