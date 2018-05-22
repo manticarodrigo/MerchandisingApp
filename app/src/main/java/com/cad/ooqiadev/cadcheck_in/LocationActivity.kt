@@ -52,7 +52,7 @@ class LocationActivity : AppCompatActivity() {
             val activityData = mDb?.activityDao()?.getLocationActivities(locationId)
             mUiHandler.post({
                 if (activityData == null || activityData.isEmpty()) {
-                    println("No activities for user in db...")
+                    println("No activities for location in db...")
                 } else {
                     // println(activityData)
                     fetchTasks(activityData)
@@ -72,7 +72,7 @@ class LocationActivity : AppCompatActivity() {
             }
             mUiHandler.post({
                 if (taskData == null || taskData.isEmpty()) {
-                    println("No locations for activities in db...")
+                    println("No tasks for activities in db...")
                 } else {
                     println(taskData)
                     bindDataWithUi(this.activities)

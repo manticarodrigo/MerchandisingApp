@@ -8,7 +8,7 @@ import java.net.InetAddress
 
 class FTP {
 
-    private val server = "192.168.86.37"
+    private val server = "192.168.86.67"
     private val port = 21
     private val user = "shared"
     private val password = "ooqiadev"
