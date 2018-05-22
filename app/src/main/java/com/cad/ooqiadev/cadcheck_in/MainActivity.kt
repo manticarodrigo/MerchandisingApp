@@ -1,5 +1,6 @@
 package com.cad.ooqiadev.cadcheck_in
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.NavigationView
@@ -14,6 +15,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.cad.ooqiadev.cadcheck_in.parsers.Location as LocationParse
 import com.cad.ooqiadev.cadcheck_in.parsers.Activity as ActivityParse
+import com.cad.ooqiadev.cadcheck_in.settings.SettingActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -110,6 +112,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_settings -> {
                 println("settings pressed")
+                val intent = Intent(this, SettingActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_sync -> {
                 println("sync pressed")
@@ -199,7 +203,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var res : Result
 
             localPathFile = applicationContext.filesDir.path + "/" + fileName + ".csv"
-            res = ftpClient?.DownloadFile(fileName + ".csv", localPathFile)!!
+            res = ftpClient?.DownloadFile("/MERC/" + fileName + ".csv", localPathFile)!!
 
             mCSViHandler.post({
 
