@@ -14,7 +14,7 @@ class TasksActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tasks)
 
         // Set toolbar title to location name
-        val activity = intent.getStringExtra(LocationTasksAdapter.ViewHolder.ACTIVITY_NAME)
+        val activity = intent.getStringExtra(LocationActivitiesAdapter.ViewHolder.ACTIVITY_NAME)
         supportActionBar?.title = activity
 
         // Set activity title
@@ -24,9 +24,9 @@ class TasksActivity : AppCompatActivity() {
         val tasks: ArrayList<Task> = ArrayList()
 
         // Load locations into ArrayList
-        tasks.add(Task("Quitar productos vencidos", Status.DONE))
-        tasks.add(Task("Colocar productos nuevos", Status.PARTIAL))
-        tasks.add(Task("Hacer inventario", Status.PENDING))
+        tasks.add(Task(null, 0, "Quitar productos vencidos", Status.DONE.toString(), null, null))
+        tasks.add(Task(null, 0, "Colocar productos nuevos", Status.PARTIAL.toString(), null, null))
+        tasks.add(Task(null, 0, "Hacer inventario", Status.PENDING.toString(), null, null))
 
         // Create vertical Layout Manager
         val rv = findViewById<RecyclerView>(R.id.tasksList)

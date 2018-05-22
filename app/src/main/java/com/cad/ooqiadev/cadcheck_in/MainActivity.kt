@@ -10,11 +10,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.cad.ooqiadev.cadcheck_in.parsers.Location as LocationParse
 import com.cad.ooqiadev.cadcheck_in.parsers.Activity as ActivityParse
+import com.cad.ooqiadev.cadcheck_in.parsers.Task as TaskParse
 import com.cad.ooqiadev.cadcheck_in.settings.SettingActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var adapter: MainAdapter? = null
     private var locations: ArrayList<Location> = ArrayList()
     private var activities: ArrayList<Activity> = ArrayList()
-    private var fileNames = listOf("LOCATIONS", "ACTIVITIES")
+    private var tasks: ArrayList<Task> = ArrayList()
+    private var fileNames = listOf("LOCATIONS", "ACTIVITIES", "TASKS")
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -87,22 +88,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
@@ -146,7 +131,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val location = Runnable {
             val locationData = activities.map { mDb?.locationDao()?.getLocationForActivity(it.locationId) }
             val locationMap = locationData.groupBy { it?.id }
-            //val locationArrayList: ArrayList<Location> = ArrayList()
             locationMap.forEach {
                 val loc = it.value[0]
                 loc?.pendingActivities = it.value.size
@@ -188,6 +172,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDbWorkerThread.postTask(activity)
     }
 
+    private fun insertTaskDataInDb(data: Task) {
+        val task = Runnable { mDb?.taskDao()?.insert(data) }
+        mDbWorkerThread.postTask(task)
+    }
+
     private fun insertUserDataInDb(data: User) {
         val user = Runnable { mDb?.userDao()?.insert(data) }
         mDbWorkerThread.postTask(user)
@@ -200,6 +189,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             this.ftpClient = FTP()
             var lp = LocationParse()
             var ap = ActivityParse()
+            var tp = TaskParse()
             var res : Result
 
             localPathFile = applicationContext.filesDir.path + "/" + fileName + ".csv"
@@ -215,12 +205,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     when(fileName) {
                         "LOCATIONS" -> {
                             locations = lp.parse(res.rows!!)
-                            insertLocations(locations)
+                            // Initialize and insert test user
+                            val user = User(0, "John Doe") // TODO: Remove once user cache is working
+                            insertUserDataInDb(user)
+
+                            // Insert locations in db
+                            for (location in locations) {
+                                insertLocationDataInDb(location)
+                            }
                         }
 
                         "ACTIVITIES" -> {
                             activities = ap.parse(res.rows!!)
-                            insertActivities(activities)
+                            // Insert activities in db
+                            for (activity in activities) {
+                                insertActivityDataInDb(activity)
+                            }
+                            locations  = ArrayList()
+                            fetchLocations(activities)
+                        }
+                        "TASKS" -> {
+                            // Parse CSV to Object
+                            tasks = tp.parse(res.rows!!)
+                            // Insert tasks in db
+                            for (task in tasks) {
+                                insertTaskDataInDb(task)
+                            }
                         }
                     }
 
@@ -232,28 +242,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         }
         mDbWorkerThread.postTask(dataFile)
-    }
-
-    private fun insertLocations(locations: ArrayList<Location>) {
-
-        // Initialize and insert test user
-        val user = User(0, "John Doe")
-        insertUserDataInDb(user)
-
-        // Insert test locations in db
-        for (location in locations) {
-            insertLocationDataInDb(location)
-        }
-
-    }
-
-    private fun insertActivities(activities: ArrayList<Activity>) {
-        // Insert test activities in db
-        for (activity in activities) {
-            insertActivityDataInDb(activity)
-        }
-
-        locations  = ArrayList()
-        fetchLocations(activities)
     }
 }

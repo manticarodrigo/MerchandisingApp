@@ -11,7 +11,7 @@ class FTP {
     private val server = "192.168.86.37"
     private val port = 21
     private val user = "shared"
-    private val password = "123456789"
+    private val password = "ooqiadev"
     private var ftpClient: FTPClient? = null
     private var isFtpClientOpened = false
 
