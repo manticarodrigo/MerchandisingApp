@@ -1,10 +1,12 @@
 <resources>
-    <string name="app_name">CAD Check-in</string>
+    <string name="app_name">Merchandising App</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Check-in App</string>
+    <string name="nav_header_title">Merchandising App</string>
     <string name="nav_header_subtitle">CAD Import</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="order_empty_message">Ingrese el número de orden</string>
     <string name="not_available_connection">No esta conectado a una red</string>
+
+    <string name="save_button_settings">Guardar</string>
 </resources>

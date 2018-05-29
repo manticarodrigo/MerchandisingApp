@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -26,25 +26,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LocationActivity"
+            android:name=".location.LocationActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".main.MainActivity" />
         </activity>
         <activity
-            android:name=".TasksActivity"
+            android:name=".customer.CustomerActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LocationActivity" />
+                android:value=".location.LocationActivity" />
         </activity>
         <activity
-            android:name=".settings.SettingActivity"
+            android:name=".task.TaskActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".customer.CustomerActivity" />
+        </activity>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.MainActivity" />
         </activity>
     </application>
 

@@ -3,15 +3,20 @@ package com.cad.ooqiadev.cadcheck_in
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.Room
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
+import com.cad.ooqiadev.cadcheck_in.models.*
+import com.cad.ooqiadev.cadcheck_in.models.DAO.*
+import com.cad.ooqiadev.cadcheck_in.utils.Converters
 
-@Database(entities = arrayOf(User::class, Location::class, Activity::class, Task::class), version = 1)
+@Database(entities = arrayOf(Customer::class, TaskCatalog::class, Task::class, Item::class), version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun userDao(): UserDao
-    abstract fun locationDao(): LocationDao
-    abstract fun activityDao(): ActivityDao
+    abstract fun customerDao(): CustomerDao
+    abstract fun taskCatalogDao(): TaskCatalogDao
     abstract fun taskDao(): TaskDao
+    abstract fun itemDao(): ItemDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
