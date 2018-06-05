@@ -24,14 +24,11 @@
 
     <Button
         android:id="@+id/saveTaskButton"
-        android:layout_width="0dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Guardar"
+        android:text="@string/save_button_settings"
+        android:textColor="#fff"
+        android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

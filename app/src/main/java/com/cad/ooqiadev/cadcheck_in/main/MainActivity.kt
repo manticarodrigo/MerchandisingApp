@@ -23,7 +23,8 @@ import com.cad.ooqiadev.cadcheck_in.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.File
-import android.R.attr.path
+import android.view.View
+import android.widget.TextView
 import com.cad.ooqiadev.cadcheck_in.task.TaskActivity
 
 
@@ -84,6 +85,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Access RecyclerView Adapter and load the data
         this.adapter = MainAdapter(customerData)
         rv.adapter = adapter
+
+        val noDataTextView = findViewById<TextView>(R.id.noDataTextView)
+        if (customerData.isEmpty()) {
+            rv.setVisibility(View.GONE)
+            noDataTextView.setVisibility(View.VISIBLE)
+        } else {
+            rv.setVisibility(View.VISIBLE)
+            noDataTextView.setVisibility(View.GONE)
+        }
     }
 
     override fun onBackPressed() {

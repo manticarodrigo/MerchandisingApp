@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".settings.SettingsActivity">
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp">
+        android:id="@+id/generalCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,88 +30,97 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:text="General"
-                android:textColor="#639678"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
                 android:padding="15dp"
+                android:text="General"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+                android:textColor="#639678"
                 android:textSize="18sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/userBadge"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/circle_badge"
-                    android:text="1"
-                    android:textColor="#fff"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/plannedCode"
-                    android:layout_width="270dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:hint="Codigo de plan"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text=""
-                    android:textSize="14sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/userBadge"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_badge"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="1"
+                        android:textColor="#fff"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/plannedCode"
+                        android:layout_width="270dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:ems="10"
+                        android:hint="Codigo de plan"
+                        android:inputType="text"
+                        android:text=""
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/customerTypeBadge"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_badge"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="2"
+                        android:textColor="#fff"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/customerType"
+                        android:layout_width="270dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:ems="10"
+                        android:hint="Tipo cliente"
+                        android:inputType="text"
+                        android:text=""
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/customerTypeBadge"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/circle_badge"
-                    android:text="2"
-                    android:textColor="#fff"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/customerType"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:hint="Tipo cliente"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text=""
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp">
+        android:id="@+id/ftpCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generalCardView">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,10 +132,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:text="FTP"
-                android:textColor="#639678"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
                 android:padding="15dp"
+                android:text="FTP"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+                android:textColor="#639678"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -143,8 +159,8 @@
                     android:id="@+id/ftpHost"
                     android:layout_width="270dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:ems="10"
                     android:hint="Host"
                     android:inputType="text"
@@ -207,8 +223,8 @@
                     android:id="@+id/ftpPassword"
                     android:layout_width="270dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:hint="Contraseña"
                     android:inputType="textPassword"
                     android:text=""
@@ -216,24 +232,19 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <Button
-                    android:id="@+id/saveButton"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/save_button_settings"
-                    android:background="@color/colorPrimary"
-                    android:textColor="#fff"
-                    android:onClick="onSaveClickBtn" />
-
-            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:onClick="onSaveClickBtn"
+        android:text="@string/save_button_settings"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

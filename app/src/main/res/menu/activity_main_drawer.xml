@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_menu_inbox"
-            android:title="Pendientes" />
+            android:title="Clientes" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_settings"

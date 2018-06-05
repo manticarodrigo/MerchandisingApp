@@ -137,13 +137,14 @@ class TaskActivity : AppCompatActivity() {
         // Set comment input
         editTextComment= EditText(this)
         editTextComment!!.hint="Agregar comentario..."
+        editTextComment!!.setText(this.currentTask?.comment)
+        editTextComment!!.setPadding(25, 30, 25, 30)
         val container = FrameLayout(this)
-        container.setPadding(25, 30, 25, 30)
+        container.setPadding(30, 30, 30, 30)
         container.addView(editTextComment)
         // Set a positive button and its click listener on alert dialog
         builder.setPositiveButton("YES") {
             dialog, which ->
-
             // Update task comment
              currentTask!!.comment = editTextComment?.text.toString()
              insertTaskDataInDb(currentTask!!)
