@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.*
@@ -93,7 +94,7 @@ class CustomerActivity : AppCompatActivity() {
         mDbWorkerThread.postTask(task)
     }
 
-    fun isFulfilled (task : Task): Boolean {
+    fun isFulfilled(task: Task): Boolean {
         var text: Boolean = false
         var image: Boolean = false
         var checkBox: Boolean = false
@@ -102,15 +103,43 @@ class CustomerActivity : AppCompatActivity() {
         image = !(task.photoUrls?.contains("")!!)
         checkBox = !(task.checkboxValues?.contains("")!!)
 
+        println(task.textValues?.contains(""))
+
         return (text && image && checkBox)
     }
 
-    fun startTaskActivity(taskCatalog: TaskCatalog, position: Int) {
-        val intent = Intent(this@CustomerActivity, TaskActivity::class.java)
-        intent.putExtra(TASK_CATALOG_ID, taskCatalog.id)
-        intent.putExtra(TASK_CATALOG_DESCRIPTION, taskCatalog.description)
-        intent.putExtra(CUSTOMER_ID, this.customerId)
-        startActivityForResult(intent, position)
+    fun areFulfilled(): Boolean {
+        this.tasks?.forEach {
+            val bool = isFulfilled(it)
+            if (!bool) {
+                return false
+            }
+        }
+        return true
+    }
+
+    fun startTaskActivity(taskCatalog: TaskCatalog, task: Task?, position: Int) {
+        if (areFulfilled() || task != null) {
+            val intent = Intent(this@CustomerActivity, TaskActivity::class.java)
+            intent.putExtra(TASK_CATALOG_ID, taskCatalog.id)
+            intent.putExtra(TASK_CATALOG_DESCRIPTION, taskCatalog.description)
+            intent.putExtra(CUSTOMER_ID, this.customerId)
+            startActivityForResult(intent, position)
+        } else {
+            // Initialize a new instance of
+            val builder = AlertDialog.Builder(this)
+            // Set the alert dialog title
+            builder.setTitle("Tiene tareas pendientes.")
+            builder.setMessage("Favor terminar tareas pendientes (!) antes de continuar.")
+            // Set a positive button and its click listener on alert dialog
+            builder.setPositiveButton("OK") {
+                dialog, which ->
+                // Do nothing
+            }
+            // Make and display the alert dialog on app interface
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

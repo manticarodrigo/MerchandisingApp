@@ -179,7 +179,7 @@ class TaskActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CAMERA) {
+        if (resultCode != 0 && requestCode == CAMERA) {
             val proofBitmap = data!!.extras!!.get("data") as Bitmap
             currentTask?.photoUrls!![currentPhotoPos] = saveImage(proofBitmap)
             if(currentTask?.photoUrls!![currentPhotoPos] != "") {

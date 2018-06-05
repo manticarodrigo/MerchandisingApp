@@ -37,7 +37,7 @@ class CustomerAdapter(val taskCatalogList: ArrayList<TaskCatalog>, context: Cont
         }
         // Add click listener for task item
         holder.itemView.setOnClickListener {
-            customerActivity.startTaskActivity(taskCatalog, position)
+            customerActivity.startTaskActivity(taskCatalog, task, position)
         }
     }
 
