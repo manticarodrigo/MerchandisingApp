@@ -32,7 +32,7 @@ class MainAdapter(val customerList: ArrayList<Customer>): RecyclerView.Adapter<M
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.main_customer_list_item, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_customer, parent, false)
         return ViewHolder(v)
     }
 

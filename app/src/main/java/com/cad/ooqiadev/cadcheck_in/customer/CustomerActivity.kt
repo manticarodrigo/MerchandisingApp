@@ -9,11 +9,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.*
 import com.cad.ooqiadev.cadcheck_in.*
+import com.cad.ooqiadev.cadcheck_in.item.ItemActivity
 import com.cad.ooqiadev.cadcheck_in.main.MainAdapter
 import com.cad.ooqiadev.cadcheck_in.models.Task
 import com.cad.ooqiadev.cadcheck_in.models.TaskCatalog
 import com.cad.ooqiadev.cadcheck_in.task.TaskActivity
-import java.util.*
+import kotlin.collections.ArrayList
 
 class CustomerActivity : AppCompatActivity() {
 
@@ -26,11 +27,13 @@ class CustomerActivity : AppCompatActivity() {
     var tasks: ArrayList<Task>? = null
 
     private var adapter: CustomerAdapter? = null
+    var bottomSheet: BottomSheet? = null
 
     companion object {
         val CUSTOMER_ID = "customerId"
-        val TASK_CATALOG_ID = "taskId"
-        val TASK_CATALOG_DESCRIPTION = "taskDescription"
+        val TASK_CATALOG_ID = "taskCatalogId"
+        val TASK_CATALOG_DESCRIPTION = "taskCatalogDescription"
+        val TASK_ID = "taskId"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,13 +118,60 @@ class CustomerActivity : AppCompatActivity() {
         return true
     }
 
-    fun startTaskActivity(taskCatalog: TaskCatalog, task: Task?, position: Int) {
+    fun startTaskActivity(task: Task) {
+        println(task)
+        val intent = Intent(this@CustomerActivity, TaskActivity::class.java)
+        intent.putExtra(CUSTOMER_ID, this.customerId)
+        intent.putExtra(TASK_CATALOG_ID, task.taskCatalogId)
+        intent.putExtra(TASK_CATALOG_DESCRIPTION, task.description)
+        intent.putExtra(TASK_ID, task.id)
+        startActivityForResult(intent, 0)
+    }
+
+    fun startNewTaskActivity(taskCatalog: TaskCatalog) {
+        val intent = Intent(this@CustomerActivity, TaskActivity::class.java)
+        intent.putExtra(TASK_CATALOG_ID, taskCatalog.id)
+        intent.putExtra(TASK_CATALOG_DESCRIPTION, taskCatalog.description)
+        intent.putExtra(CUSTOMER_ID, this.customerId)
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        this.fetchTasks()
+        this.adapter!!.notifyDataSetChanged()
+    }
+
+    private fun fetchTasksForTaskCatalog(taskCatalog: TaskCatalog, callback: (ArrayList<Task>?) -> Unit) {
+        val task = Runnable {
+            val taskData = mDb?.taskDao()?.getTasksForTaskCatalogAndCustomer(taskCatalog.id, this.customerId!!)
+            mUiHandler.post({
+                if (taskData == null) {
+                    println("No tasks found in db")
+                    callback(null)
+                } else {
+                    callback(taskData as ArrayList<Task>)
+                }
+            })
+        }
+        mDbWorkerThread.postTask(task)
+    }
+
+    private fun showBottomSheet(taskCatalog: TaskCatalog, tasks: ArrayList<Task>) {
+        this.bottomSheet = BottomSheet(taskCatalog, tasks, this@CustomerActivity)
+        this.bottomSheet?.show()
+    }
+
+    fun handleTaskPressed(taskCatalog: TaskCatalog, task: Task?) {
         if (areFulfilled() || task != null) {
-            val intent = Intent(this@CustomerActivity, TaskActivity::class.java)
-            intent.putExtra(TASK_CATALOG_ID, taskCatalog.id)
-            intent.putExtra(TASK_CATALOG_DESCRIPTION, taskCatalog.description)
-            intent.putExtra(CUSTOMER_ID, this.customerId)
-            startActivityForResult(intent, position)
+            if (taskCatalog.isInventory == true) {
+                val intent = Intent(this@CustomerActivity, ItemActivity::class.java)
+                startActivity(intent)
+            } else {
+                fetchTasksForTaskCatalog(taskCatalog, {
+                    showBottomSheet(taskCatalog, if (it != null) it else arrayListOf<Task>())
+                })
+            }
         } else {
             // Initialize a new instance of
             val builder = AlertDialog.Builder(this)
@@ -137,28 +187,5 @@ class CustomerActivity : AppCompatActivity() {
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        println("received result " + requestCode)
-        // this.fetchTask(requestCode)
-        this.fetchTasks()
-        this.adapter!!.notifyDataSetChanged()
-    }
-
-    private fun fetchTask(position: Int) {
-        val task = Runnable {
-            val taskData = mDb?.taskDao()?.getTaskForTaskCatalogAndCustomer(this.taskCatalogs!![position].id, this.customerId!!)
-            mUiHandler.post({
-                if (taskData == null) {
-                    println("No tasks found in db")
-                } else {
-                    this.tasks?.add(taskData)
-                    this.adapter!!.notifyItemChanged(position)
-                }
-            })
-        }
-        mDbWorkerThread.postTask(task)
     }
 }

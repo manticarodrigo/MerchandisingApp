@@ -24,6 +24,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE task_catalog_id = :taskCatalogId AND customer_id = :customerId")
     fun getTaskForTaskCatalogAndCustomer(taskCatalogId: String, customerId: String): Task
 
+    @Query("SELECT * FROM tasks WHERE task_catalog_id = :taskCatalogId AND customer_id = :customerId")
+    fun getTasksForTaskCatalogAndCustomer(taskCatalogId: String, customerId: String): List<Task>
+
     @Query("SELECT * FROM tasks WHERE customer_id = :id")
     fun getTasksForCustomer(id: String?): List<Task>
 }

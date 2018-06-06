@@ -32,6 +32,7 @@ class TaskActivity : AppCompatActivity() {
     private val mUiHandler = Handler()
 
     private val CAMERA = 2
+    var currentTaskCatalog: TaskCatalog? = null
     var currentTask: Task? = null
     var currentPhotoPos: Int = -1
     var currentImageViewEvidence: ImageView? = null
@@ -50,82 +51,92 @@ class TaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
 
-        // Set toolbar title to location name
+        customerId = intent.getStringExtra(CustomerActivity.CUSTOMER_ID)
         val taskCatalogId = intent.getStringExtra(CustomerActivity.TASK_CATALOG_ID)
-        customerId = intent.getStringExtra(MainAdapter.CUSTOMER_ID)
-        val taskCatalogDescription = intent.getStringExtra(CustomerActivity.TASK_CATALOG_DESCRIPTION)
-        supportActionBar?.title = taskCatalogDescription
+        val taskId = intent.getLongExtra(CustomerActivity.TASK_ID, -1L)
 
-        fetchTaskCatalog(taskCatalogId)
+        // Set toolbar title to task catalog name
+        supportActionBar?.title = intent.getStringExtra(CustomerActivity.TASK_CATALOG_DESCRIPTION)
+
+        fetchTaskCatalog(taskCatalogId, {
+            this.currentTaskCatalog = it
+            if (taskId != -1L) {
+                fetchTask(taskId, {
+                    this.currentTask = it
+                    bindDataWithUi()
+                })
+            } else {
+                this.currentTask = createNewTask(it!!)
+                bindDataWithUi()
+            }
+        })
 
         val saveTaskButton = this@TaskActivity.findViewById<Button>(R.id.saveTaskButton)
         saveTaskButton.setOnClickListener {
-
-            if(isFulfilled(currentTask!!)) {
+            if (isFulfilled(this.currentTask!!)) {
                 openCommentDialog()
             } else {
-                insertTaskDataInDb(currentTask!!)
+                insertTaskDataInDb(this.currentTask!!)
                 Toast.makeText(this@TaskActivity, "Task saved!", Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 
-    private fun fetchTasks(taskCatalog: TaskCatalog) {
+    private fun bindDataWithUi() {
+        // Create vertical Layout Manager
+        val rv = findViewById<RecyclerView>(R.id.taskList)
+        rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+
+        // Access RecyclerView Adapter and load the data
+        var adapter = TaskAdapter(this.currentTaskCatalog!!, this)
+        rv.adapter = adapter
+    }
+
+    private fun fetchTaskCatalog(taskCatalogId: String, callback: (TaskCatalog?) -> Unit) {
+        val taskCatalog = Runnable {
+            val taskCatalogData = mDb?.taskCatalogDao()?.findTaskCatalogById(taskCatalogId)
+            mUiHandler.post({
+                if (taskCatalogData == null) {
+                    Toast.makeText(applicationContext, "No se encontro la tarea en la base de datos...", Toast.LENGTH_SHORT).show()
+                    callback(null)
+                } else {
+                    println(taskCatalogData)
+                    callback(taskCatalogData)
+                }
+            })
+        }
+        mDbWorkerThread.postTask(taskCatalog)
+    }
+
+    private fun fetchTask(taskId: Long, callback: (Task?) -> Unit) {
         val task = Runnable {
-            val taskData = mDb?.taskDao()?.getTaskForTaskCatalogAndCustomer(taskCatalog.id, this.customerId!!)
+            val taskData = mDb?.taskDao()?.findTaskById(taskId)
             mUiHandler.post({
                 if (taskData == null) {
-                    println("No tasks found in db")
-                    setCurrentTask(taskCatalog)
+                    println("No task found in db")
+                    callback(null)
                 } else {
                     println(taskData)
-                    currentTask = taskData
-                    bindDataWithUi(taskCatalog)
+                    callback(taskData)
                 }
             })
         }
         mDbWorkerThread.postTask(task)
     }
 
-    private fun setCurrentTask(taskCatalog: TaskCatalog) {
+    private fun createNewTask(taskCatalog: TaskCatalog): Task {
         val stamp = Timestamp(System.currentTimeMillis()).getTime()
-        currentTask = Task(null, taskCatalog.id, this.customerId, taskCatalog.description, arrayListOf(), arrayListOf(), arrayListOf(), "", stamp, null)
+        var task = Task(null, taskCatalog.id, this.customerId, taskCatalog.description, arrayListOf(), arrayListOf(), arrayListOf(), "", stamp, null)
         taskCatalog.textLabels?.forEach {
-            currentTask!!.textValues?.add("")
+            task.textValues?.add("")
         }
         taskCatalog.photoLabels?.forEach {
-            currentTask!!.photoUrls?.add("")
+            task.photoUrls?.add("")
         }
         taskCatalog.checkboxLabels?.forEach {
-            currentTask!!.checkboxValues?.add("")
+            task.checkboxValues?.add("")
         }
-        bindDataWithUi(taskCatalog)
-    }
-
-    private fun bindDataWithUi(taskCatalog: TaskCatalog) {
-        // Create vertical Layout Manager
-        val rv = findViewById<RecyclerView>(R.id.taskList)
-        rv.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-
-        // Access RecyclerView Adapter and load the data
-        var adapter = TaskAdapter(taskCatalog, this)
-        rv.adapter = adapter
-    }
-
-    private fun fetchTaskCatalog(taskCatalogId: String) {
-        val taskCatalog = Runnable {
-            val taskCatalogData = mDb?.taskCatalogDao()?.findTaskCatalogById(taskCatalogId)
-            mUiHandler.post({
-                if (taskCatalogData == null) {
-                    Toast.makeText(applicationContext, "No se encontro la tarea en la base de datos...", Toast.LENGTH_SHORT).show()
-                } else {
-                    println(taskCatalogData)
-                    fetchTasks(taskCatalogData)
-                }
-            })
-        }
-        mDbWorkerThread.postTask(taskCatalog)
+        return task
     }
 
     private fun openCommentDialog() {

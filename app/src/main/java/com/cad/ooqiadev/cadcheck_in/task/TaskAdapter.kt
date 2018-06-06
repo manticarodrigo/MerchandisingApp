@@ -67,16 +67,16 @@ class TaskAdapter(val taskCatalog: TaskCatalog, context: Context): RecyclerView.
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):  RecyclerView.ViewHolder {
         if (viewType === TaskAdapter.TEXT_ROW_TYPE) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.task_text_list_item, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_edittext, parent, false)
             return TextViewHolder(view)
         } else if (viewType === TaskAdapter.PHOTO_ROW_TYPE) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.task_photo_list_item, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_photo, parent, false)
             return PhotoViewHolder(view)
         } else if (viewType === TaskAdapter.CHECKBOX_ROW_TYPE) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.task_checkbox_list_item, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_checkbox, parent, false)
             return CheckboxViewHolder(view)
         } else {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.task_text_list_item, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item_edittext, parent, false)
             return TextViewHolder(view)
         }
     }
