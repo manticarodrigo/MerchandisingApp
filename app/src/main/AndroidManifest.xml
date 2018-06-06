@@ -21,23 +21,15 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".location.LocationActivity"
-            android:launchMode="singleTop">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.MainActivity" />
         </activity>
         <activity
             android:name=".customer.CustomerActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".location.LocationActivity" />
+                android:value=".main.MainActivity" />
         </activity>
         <activity
             android:name=".task.TaskActivity"
@@ -52,6 +44,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />
+        </activity>
+        <activity
+            android:name=".item.ItemActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".customer.CustomerActivity" />
         </activity>
     </application>
 

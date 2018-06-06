@@ -15,14 +15,13 @@ import com.cad.ooqiadev.cadcheck_in.models.TaskCatalog
 import com.cad.ooqiadev.cadcheck_in.task.TaskActivity
 import java.util.*
 
-
 class CustomerActivity : AppCompatActivity() {
 
     private var mDb: AppDatabase? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
     private val mUiHandler = Handler()
 
-    private var customerId: String? = null
+    var customerId: String? = null
     private var taskCatalogs: ArrayList<TaskCatalog>? = null
     var tasks: ArrayList<Task>? = null
 
@@ -102,8 +101,6 @@ class CustomerActivity : AppCompatActivity() {
         text = !(task.textValues?.contains("")!!)
         image = !(task.photoUrls?.contains("")!!)
         checkBox = !(task.checkboxValues?.contains("")!!)
-
-        println(task.textValues?.contains(""))
 
         return (text && image && checkBox)
     }

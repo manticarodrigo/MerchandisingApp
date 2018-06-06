@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".task.TaskActivity">
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/taskList"
         android:layout_width="0dp"

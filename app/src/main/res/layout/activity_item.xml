@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".task.TaskActivity">
+    tools:context=".item.ItemActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/itemList"
+        android:id="@+id/productItemList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"

@@ -9,7 +9,7 @@ import com.cad.ooqiadev.cadcheck_in.models.*
 import com.cad.ooqiadev.cadcheck_in.models.DAO.*
 import com.cad.ooqiadev.cadcheck_in.utils.Converters
 
-@Database(entities = arrayOf(Customer::class, TaskCatalog::class, Task::class, Item::class), version = 1)
+@Database(entities = arrayOf(Customer::class, TaskCatalog::class, Task::class, Item::class, TaskItem::class), version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -17,6 +17,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun taskCatalogDao(): TaskCatalogDao
     abstract fun taskDao(): TaskDao
     abstract fun itemDao(): ItemDao
+    abstract fun taskItemDao(): TaskItemDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
