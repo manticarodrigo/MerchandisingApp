@@ -145,7 +145,9 @@ class CustomerActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         println("received result " + requestCode)
-        this.fetchTask(requestCode)
+        // this.fetchTask(requestCode)
+        this.fetchTasks()
+        this.adapter!!.notifyDataSetChanged()
     }
 
     private fun fetchTask(position: Int) {
